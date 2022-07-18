@@ -89,11 +89,15 @@ function decodeValues_INT96(cursor: Cursor, count: number) {
     const low = INT53.readInt64LE(cursor.buffer, cursor.offset);
     const high = cursor.buffer.readUInt32LE(cursor.offset + 8);
 
-    if (high === 0xffffffff) {
-      values.push(~-low + 1); // truncate to 64 actual precision
-    } else {
-      values.push(low); // truncate to 64 actual precision
-    }
+    // Assume that INT96 is datetime in legacy format
+    // high is julian day
+    const daysSinceUnixStart = high - 2440587.5;  // 1970/01/01 UTC
+    const daysInMillis = daysSinceUnixStart * 24 * 60 * 60 * 1000;
+    // low is nanos since midnight
+    const millisSinceMidnight = low / 1e6;
+
+    const theDate = new Date(daysInMillis + millisSinceMidnight);
+    values.push(theDate);
 
     cursor.offset += 12;
   }
