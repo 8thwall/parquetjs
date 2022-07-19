@@ -91,7 +91,7 @@ function decodeValues_INT96(cursor: Cursor, count: number) {
 
     // Assume that INT96 is datetime in legacy format
     // high is julian day
-    const daysSinceUnixStart = high - 2440587.5;  // 1970/01/01 UTC
+    const daysSinceUnixStart = high - 2440587;  // 1970/01/01 UTC
     const daysInMillis = daysSinceUnixStart * 24 * 60 * 60 * 1000;
     // low is nanos since midnight
     const millisSinceMidnight = low / 1e6;
